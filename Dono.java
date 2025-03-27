@@ -40,4 +40,47 @@ public class Dono {
             return null;
         }
     }
+
+    public void apagarFuncionario(){
+        System.out.println("Digite o id do funcionario: ");
+        int id_func = sc.nextInt();
+        funcionarioController.deletarFuncionarioPorId(id_func);
+        System.out.println("Funcionario apagado com sucesso");
+    }
+
+    public Funcionario atualizarFuncionario() {
+        try {
+            System.out.println("Qual o id do funcionario?");
+            int idFunc = sc.nextInt();
+            sc.nextLine();
+
+            System.out.println("Nome do Funcionario: ");
+            String novoNome = sc.next();
+            sc.nextLine();
+
+            System.out.println("Novo cargo do funcionario (1-vendedor, 2-gerente): ");
+            int novoCargo = sc.nextInt();
+            sc.nextLine();
+
+            Funcionario funcionario = new Funcionario(idFunc,novoNome,novoCargo);
+            funcionarioController.atualizarFuncionario(funcionario);
+            return funcionario;
+
+        } catch (InputMismatchException e) {
+            System.out.println("Entrada inválida. Por favor, digite o tipo de dado correto.");
+            sc.nextLine(); // Limpa o buffer do scanner
+            return null;
+        } catch (NoSuchElementException | IllegalStateException e) {
+            System.out.println("Erro na leitura dos dados: " + e.getMessage());
+            return null;
+        } catch (Exception e) {
+            System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public void listarFuncionarios(){
+        System.out.println("Lista de funcionarios: ");
+        funcionarioController.listarFuncionarios();
+    }
 }

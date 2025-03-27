@@ -3,6 +3,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 public class FuncionarioDBHandler{
         public static FuncionarioDBHandler instance = new FuncionarioDBHandler();
@@ -14,15 +15,15 @@ public class FuncionarioDBHandler{
             }
             return instance;
         }
-        protected static String camainhoArquivo = "./funcionarios.csv";
+        protected static String caminhoArquivo = "./funcionarios.csv";
 
         public FuncionarioDBHandler() {
         }
 
         public static void addFuncionario(Funcionario funcionario) {
             try {
-                boolean arquivoExiste = (new File(camainhoArquivo)).exists();
-                FileWriter fw = new FileWriter(camainhoArquivo, StandardCharsets.ISO_8859_1, true);
+                boolean arquivoExiste = (new File(caminhoArquivo)).exists();
+                FileWriter fw = new FileWriter(caminhoArquivo, StandardCharsets.ISO_8859_1, true);
                 if (!arquivoExiste) {
                     fw.write("Id;Nome;Cargo\n");
                 }
@@ -37,11 +38,39 @@ public class FuncionarioDBHandler{
             }
         }
 
+    public static void atualizarFuncionario(Funcionario funcionarioAtualizado) {
+        ArrayList<Funcionario> funcionarios = listarFuncionarios();
+
+        try {
+            FileWriter fw = new FileWriter(caminhoArquivo, StandardCharsets.ISO_8859_1);
+            fw.write("Id;Nome;Cargo\n"); // Ajuste os campos conforme sua necessidade real
+
+            for (Funcionario f : funcionarios) {
+                if (f.getId() == (funcionarioAtualizado.getId())) {
+                    f.setNome(funcionarioAtualizado.getNome());
+                    f.setCod_cargo(funcionarioAtualizado.getCod_cargo());
+
+                    System.out.println("Funcionário atualizado:");
+                    System.out.println("ID: " + f.getId() +
+                            ", Nome: " + f.getNome() +
+                            ", Cargo: " + f.getCod_cargo());
+                }
+                fw.write(f.getId() + ";" + f.getNome() + ";" + f.getCod_cargo() + "\n");
+            }
+
+            fw.flush();
+            fw.close();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
         public static ArrayList<Funcionario> listarFuncionarios() {
             ArrayList<Funcionario> listaFuncionarios = new ArrayList();
 
             try {
-                BufferedReader leitor = new BufferedReader(new FileReader(camainhoArquivo));
+                BufferedReader leitor = new BufferedReader(new FileReader(caminhoArquivo));
                 boolean primeiraLinha = true;
 
                 String linha;
@@ -59,7 +88,7 @@ public class FuncionarioDBHandler{
                         listaFuncionarios.add(funcionario);
                         PrintStream var10000 = System.out;
                         String var10001 = funcionario.getNome();
-                        var10000.println("Id: "+ funcionario.getId() + "Nome: " + var10001 + ", Cargo: " + funcionario.getCod_cargo());
+                        var10000.println("Id: "+ funcionario.getId() + "Nome: " + var10001 + ", Cargo (1-gerente; 2-vendedor): " + funcionario.getCod_cargo());
                     }
                 }
 
@@ -74,19 +103,19 @@ public class FuncionarioDBHandler{
         public static void removerFuncionarioPorId(int idParaRemover) {
             Exception e;
             try {
-                File arquivo = new File(camainhoArquivo);
+                File arquivo = new File(caminhoArquivo);
                 if (!arquivo.exists()) {
                     System.out.println("Arquivo não encontrado.");
                     return;
                 }
             } catch (Exception var10) {
                 e = var10;
-                throw new RuntimeException("Erro ao remover vendedor: " + e.getMessage(), e);
+                throw new RuntimeException("Erro ao remover funcionario: " + e.getMessage(), e);
             }
 
             try {
                 ArrayList<String> linhasAtualizadas = new ArrayList();
-                BufferedReader leitor = new BufferedReader(new FileReader(camainhoArquivo));
+                BufferedReader leitor = new BufferedReader(new FileReader(caminhoArquivo));
                 boolean primeiraLinha = true;
 
                 String linha;
@@ -104,7 +133,7 @@ public class FuncionarioDBHandler{
                 }
 
                 leitor.close();
-                BufferedWriter escritor = new BufferedWriter(new FileWriter(camainhoArquivo, StandardCharsets.ISO_8859_1, false));
+                BufferedWriter escritor = new BufferedWriter(new FileWriter(caminhoArquivo, StandardCharsets.ISO_8859_1, false));
                 Iterator var13 = linhasAtualizadas.iterator();
 
                 while(var13.hasNext()) {
@@ -119,5 +148,6 @@ public class FuncionarioDBHandler{
                 throw new RuntimeException("Erro ao remover vendedor: " + e.getMessage(), e);
             }
         }
+
     }
 
